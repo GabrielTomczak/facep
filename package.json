@@ -1,0 +1,19 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "Esse projeto de portfólio é voltado para profissionais de biomedicina estética.\r # Objetivo\r   O principal objetivo do projeto é automatizar o processo de cálculo cefalométrico utilizado para fazer harmonização facial. O software captura as medidas do rosto do paciente, realiza o cálculo e sugere a quantidade adequada de produtos a serem utilizados no processo.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LucasAnjs/facep.git"
+  },
+  "author": "Lucas dos Anjos",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LucasAnjs/facep/issues"
+  },
+  "homepage": "https://github.com/LucasAnjs/facep#readme"
+}
