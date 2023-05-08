@@ -7,8 +7,9 @@ export default {
     TextInput,
     Camera,
     TextArea
-  }
+  },
 }
+
 </script>
 
 <template>
@@ -19,7 +20,7 @@ export default {
     <TextInput msg="Nome do Perfil"/>
     <div class="camera">
       <Camera :resolution="{ width: 1920, height: 1080 }" autoplay/>
-      <button class="btn btn-success" @click="snapshot">Tira foto</button>
+      <button class="btn btn-success" @click="Camera.snapshot()">Tira foto</button>
     </div>
     <div class="description">
       <TextArea label="Observações do Profissional"></TextArea>
