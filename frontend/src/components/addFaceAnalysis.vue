@@ -13,9 +13,8 @@ export default {
   },
   methods: {
     takePicture() {
+      this.$refs.webcam.resume();
       this.$refs.webcam.takePhoto();
-      this.$emit.webcam.stop();
-
       axios.get('http://127.0.0.1:5000/face_analysis')
       .then(response => {
         console.log(response);
@@ -26,7 +25,6 @@ export default {
     },
   }
 }
-
 </script>
 
 <template>
@@ -36,7 +34,7 @@ export default {
   <div class="main">
     <TextInput msg="Nome do Perfil"/>
     <div class="camera">
-      <WebCam ref="webcam" :audio="false" :shutterEffect="false"/>
+      <WebCam ref="webcam" :autoStart="true" :audio="false"/>
       <button class="btn btn-success" @click="takePicture()">Tira foto</button>
     </div>
     <div class="description">
