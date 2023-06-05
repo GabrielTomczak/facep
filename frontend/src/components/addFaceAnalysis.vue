@@ -1,26 +1,43 @@
 <script>
 import TextInput from './TextInput.vue';
 import Camera from 'simple-vue-camera';
-import TextArea from './TextArea.vue'
+import TextArea from './TextArea.vue';
+import axios from 'axios';
+import { WebCam } from 'vue-camera-lib'
 export default {
   components: {
     TextInput,
     Camera,
-    TextArea
+    TextArea,
+    WebCam
   },
+  methods: {
+    takePicture() {
+      this.$refs.webcam.takePhoto();
+      this.$emit.webcam.stop();
+
+      axios.get('http://127.0.0.1:5000/face_analysis')
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    },
+  }
 }
 
 </script>
 
 <template>
   <header>
-    <h1>Nova Análise Cefalométrica</h1>
+    <h1>Análise Facial</h1>
   </header>
   <div class="main">
     <TextInput msg="Nome do Perfil"/>
     <div class="camera">
-      <Camera :resolution="{ width: 1920, height: 1080 }" autoplay/>
-      <button class="btn btn-success" @click="Camera.snapshot()">Tira foto</button>
+      <WebCam ref="webcam" :audio="false" :shutterEffect="false"/>
+      <button class="btn btn-success" @click="takePicture()">Tira foto</button>
     </div>
     <div class="description">
       <TextArea label="Observações do Profissional"></TextArea>
