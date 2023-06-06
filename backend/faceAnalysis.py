@@ -8,11 +8,37 @@ class FaceAnalysis():
     def __init__(self, name):
         self.name = name
 
-    def calculateDistance(self, x1, y1, x2, y2):
-        a = x2 - x1
-        b = y2 - y1
-        distance = math.sqrt(math.pow(a, 2) + math.pow(b, 2))
-        return distance
+    def chinSize(self, firstPoint, secondPoint):
+        x1, y1 = firstPoint
+        x2, y2 = secondPoint
+        pointA = x2 - x1
+        pointB = y2 - y1
+        chinSize = math.sqrt(math.pow(pointA, 2) + math.pow(pointB, 2))
+        return chinSize
+
+    def noseSize(self, firstPoint, secondPoint):
+        x1, y1 = firstPoint
+        x2, y2 = secondPoint
+        pointA = x2 - x1
+        pointB = y2 - y1
+        noseSize = math.sqrt(math.pow(pointA, 2) + math.pow(pointB, 2))
+        return noseSize
+
+    def eyeSize(self, firstPoint, secondPoint):
+        x1, y1 = firstPoint
+        x2, y2 = secondPoint
+        pointA = x2 - x1
+        pointB = y2 - y1
+        eyeSize = math.sqrt(math.pow(pointA, 2) + math.pow(pointB, 2))
+        return eyeSize
+
+    def faceSize(self, firstPoint, secondPoint):
+        x1, y1 = firstPoint
+        x2, y2 = secondPoint
+        pointA = x2 - x1
+        pointB = y2 - y1
+        faceSize = math.sqrt(math.pow(pointA, 2) + math.pow(pointB, 2))
+        return faceSize
 
     def px_to_cm(self, pixels, ppcm):
         centimeters = pixels / ppcm
@@ -54,14 +80,14 @@ while True:
         shape = predictor(gray, rect)
         shape = face_utils.shape_to_np(shape)
 
-        for (x, y) in shape:
-            cv2.circle(image, (x,y), 2, (0, 255, 0), -1)
+        # for (x, y) in shape:
+            # cv2.circle(image, (x,y), 2, (0, 255, 0), -1)
             # cv2.circle(image, (shape[8]), 2, (0, 255, 0), -1)
             # cv2.circle(image, (shape[33]), 2, (0, 255, 0), -1)
 
-        x1, y1 = shape[8]
-        x2, y2 = shape[33]
-        print("Distância: %.2f" % face.calculateDistance(x1, y1, x2, y2))
+        print("Queixo: %.2f cm" % face.chinSize(shape[8], shape[33]))
+        print("Nariz: %.2f cm" % face.noseSize(shape[27], shape[33]))
+        print("Olhos: %.2f cm" % face.eyeSize(shape[36], shape[45]))
 
     cv2.imshow("Output", image)
     k = cv2.waitKey(5) & 0xFF
