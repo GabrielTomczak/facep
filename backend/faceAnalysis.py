@@ -1,98 +1,154 @@
-from imutils import face_utils
-import dlib
 import cv2
+import mediapipe as mp
 import math
-from PIL import Image
+import numpy as np
 
-class FaceAnalysis():
-    def __init__(self, name):
-        self.name = name
+def calcDistance (point1, point2):
+  return math.sqrt((point2[0] - point1[0])**2 + (point2[1] - point1[1])**2)
 
-    def chinSize(self, firstPoint, secondPoint):
-        x1, y1 = firstPoint
-        x2, y2 = secondPoint
-        pointA = x2 - x1
-        pointB = y2 - y1
-        chinSize = math.sqrt(math.pow(pointA, 2) + math.pow(pointB, 2))
-        return chinSize
+def calcThird(third, trme):
+  thirdValue = third * 100
+  trmeValue = thirdValue / trme
+  return trmeValue
 
-    def noseSize(self, firstPoint, secondPoint):
-        x1, y1 = firstPoint
-        x2, y2 = secondPoint
-        pointA = x2 - x1
-        pointB = y2 - y1
-        noseSize = math.sqrt(math.pow(pointA, 2) + math.pow(pointB, 2))
-        return noseSize
+def faceHeightAnalysis(faceHeight):
+  if (faceHeight < 75):
+    print('Altura: Face longa - Indica preenchimento de malar.')
+  elif (faceHeight > 75):
+    print('Altura: Face curta - Indica preenchimento de terço inferior.')
 
-    def eyeSize(self, firstPoint, secondPoint):
-        x1, y1 = firstPoint
-        x2, y2 = secondPoint
-        pointA = x2 - x1
-        pointB = y2 - y1
-        eyeSize = math.sqrt(math.pow(pointA, 2) + math.pow(pointB, 2))
-        return eyeSize
+def faceWidthAnalysis(sex, faceWidth):
+  if (faceWidth < 75 and sex == "female"):
+    print('Largura: Zi zi muito grande - Indica prenchimento mandibula/mento.')
+  elif (faceWidth > 75 and sex == "female"):
+    print('Largura: Go go muito grande - Indica preenchimento zigomatico/malar.')
+  elif (faceWidth < 75 and sex == "male"):
+    print('Largura: Zi zi muito grande - Indica prenchimento mandibula/mento.')
+  elif (faceWidth > 75 and sex == "male"):
+    print('Largura: Face com tamanho ideal.')
 
-    def faceSize(self, firstPoint, secondPoint):
-        x1, y1 = firstPoint
-        x2, y2 = secondPoint
-        pointA = x2 - x1
-        pointB = y2 - y1
-        faceSize = math.sqrt(math.pow(pointA, 2) + math.pow(pointB, 2))
-        return faceSize
+def lowerThirdAnalysis(sex, third):
+  if (sex == "male" and third > 36):
+    print('Destacar terço médio Zi zi/Go go.')
+  elif (sex == "male" and third < 36):
+    print('Destacar')
+  elif (sex == "female" and third > 33):
+    print('Destacar terço médio Zi zi/Go go.')
+  elif (sex == "female" and third < 33):
+    print('Destacar')
 
-    def px_to_cm(self, pixels, ppcm):
-        centimeters = pixels / ppcm
-        return centimeters
+def middleThirdAnalysis(sex, third):
+  if (sex == "male" and third > 30):
+    print('Destacar terço inferior.')
+  elif (sex == "male" and third < 30):
+    print('Destacar molar CK3.')
+  elif (sex == "female" and third > 33):
+    print('Destacar terço inferior.')
+  elif (sex == "female" and third < 33):
+    print('Destacar molar CK3.')
 
-    def getImageResolution(self, camera):
-        width    = camera.get(cv2.CAP_PROP_FRAME_WIDTH)
-        height   = camera.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        ratio    = camera.get(cv2.CAP_PROP_POS_AVI_RATIO)
-        duration = camera.get(cv2.CAP_PROP_POS_MSEC) / 1000
-        frames   = ratio * duration * camera.get(cv2.CAP_PROP_FPS)
-        ppcm     = (width/frames) * 2.54
-        return ppcm
+def upperThirdAnalysis(sex, third):
+  if (sex == "male" and third > 34):
+    print('Destacar terço médio e inferior.')
+  elif (sex == "male" and third < 34):
+    print('Destacar terço médio e inferior.')
+  elif (sex == "female" and third > 34):
+    print('Destacar terço Destacar terço médio e inferior.')
+  elif (sex == "female" and third < 34):
+    print('Destacar terço médio e inferior.')
 
-    def getImagePixels(self, camera, image):
-        width    = camera.get(cv2.CAP_PROP_FRAME_WIDTH)
-        height   = camera.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        ratio    = camera.get(cv2.CAP_PROP_POS_AVI_RATIO)
-        duration = camera.get(cv2.CAP_PROP_POS_MSEC) / 1000
-        frame    = image
-        height, width, channel = frame.shape
-        num_pixels = width * height * channel
-        return num_pixels
 
-face = FaceAnalysis("teste")
-model = "shape_predictor_68_face_landmarks.dat"
-detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor(model)
-camera = cv2.VideoCapture(0)
-# cv2.imwrite("face.jpg", image)
-# if ret:
-while True:
-    # ppcm = face.getImageResolution(camera)
-    ret, image = camera.read()
-    pixels = face.getImagePixels(camera, image)
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    rects = detector(gray, 0)
-    for (i, rect) in enumerate(rects):
-        shape = predictor(gray, rect)
-        shape = face_utils.shape_to_np(shape)
+faceModel = mp.solutions.face_mesh
+model = faceModel.FaceMesh(static_image_mode=True, max_num_faces=1, min_detection_confidence=0.5)
 
-        # for (x, y) in shape:
-            # cv2.circle(image, (x,y), 2, (0, 255, 0), -1)
-            # cv2.circle(image, (shape[8]), 2, (0, 255, 0), -1)
-            # cv2.circle(image, (shape[33]), 2, (0, 255, 0), -1)
+image = cv2.imread('images/photo.jpg')
+original_width, original_height = image.shape[:2]
 
-        print("Queixo: %.2f cm" % face.chinSize(shape[8], shape[33]))
-        print("Nariz: %.2f cm" % face.noseSize(shape[27], shape[33]))
-        print("Olhos: %.2f cm" % face.eyeSize(shape[36], shape[45]))
+new_width = 450
+new_height = 600
 
-    cv2.imshow("Output", image)
-    k = cv2.waitKey(5) & 0xFF
-    if k == 27:
-        break
+resized_image = cv2.resize(image, (new_width, new_height))
+image_rgb = cv2.cvtColor(resized_image, cv2.COLOR_BGR2RGB)
 
+processedModel = model.process(image_rgb)
+
+if processedModel.multi_face_landmarks:
+    for face_landmarks in processedModel.multi_face_landmarks:
+      #trme - Testa ao queixo (Face)
+      point1 = face_landmarks.landmark[10]
+      point2 = face_landmarks.landmark[175]
+
+      #Zizi - Orelha
+      point3 = face_landmarks.landmark[34]
+      point4 = face_landmarks.landmark[264]
+
+      #Gogo - Mandibula
+      point5 = face_landmarks.landmark[58]
+      point6 = face_landmarks.landmark[288]
+
+      #SnN - Nariz e sobrancelha
+      point7 = face_landmarks.landmark[2]
+      point8 = face_landmarks.landmark[9]
+
+      height, width, _ = resized_image.shape
+      point1_px = int(point1.x * width), int(point1.y * height)
+      point2_px = int(point2.x * width), int(point2.y * height)
+      point3_px = int(point3.x * width), int(point3.y * height)
+      point4_px = int(point4.x * width), int(point4.y * height)
+      point5_px = int(point5.x * width), int(point5.y * height)
+      point6_px = int(point6.x * width), int(point6.y * height)
+      point7_px = int(point7.x * width), int(point7.y * height)
+      point8_px = int(point8.x * width), int(point8.y * height)
+
+      cv2.circle(resized_image, point1_px, 5, (0, 255, 0), -1)
+      cv2.circle(resized_image, point2_px, 5, (0, 255, 0), -1)
+      cv2.circle(resized_image, point3_px, 5, (0, 255, 0), -1)
+      cv2.circle(resized_image, point4_px, 5, (0, 255, 0), -1)
+      cv2.circle(resized_image, point5_px, 5, (0, 255, 0), -1)
+      cv2.circle(resized_image, point6_px, 5, (0, 255, 0), -1)
+      cv2.circle(resized_image, point7_px, 5, (0, 255, 0), -1)
+      cv2.circle(resized_image, point8_px, 5, (0, 255, 0), -1)
+
+      trmeDistance = calcDistance(point1_px, point2_px)
+      ziziDistance = calcDistance(point3_px, point4_px)
+      gogoDistance = calcDistance(point5_px, point6_px)
+      snnDistance  = calcDistance(point7_px, point8_px)
+      lowerThird   = calcDistance(point2_px, point7_px)
+      middleThird  = calcDistance(point7_px, point8_px)
+      upperThird   = calcDistance(point1_px, point8_px)
+
+      focal_length = 22
+
+      trme         = trmeDistance * focal_length / width
+      zizi         = ziziDistance * focal_length / width
+      gogo         = gogoDistance * focal_length / width
+      snn          = snnDistance  * focal_length / width
+      lowerThird   = lowerThird   * focal_length / width
+      middleThird  = middleThird  * focal_length / width
+      upperThird   = upperThird   * focal_length / width
+
+      faceHeight = (zizi / trme) * 100
+      faceWidth  = (gogo / zizi) * 100
+
+      lower  = calcThird(lowerThird, trme)
+      middle = calcThird(middleThird, trme)
+      upper  = calcThird(upperThird, trme)
+
+      print(f'\nTrme_zizi: {faceHeight:.2f} %')
+      faceHeightAnalysis(faceHeight)
+      print(f'\nZizi_Gogo: {faceWidth:.2f} %')
+      faceWidthAnalysis("male", faceWidth)
+      print('\n')
+      print(f'Terço inferior: {lower:.0f} %')
+      lowerThirdAnalysis("male", lowerThird)
+      print('\n')
+      print(f'Terço meio: {middle:.0f} %')
+      middleThirdAnalysis("male", middleThird)
+      print('\n')
+      print(f'Terço superior: {upper:.0f} %')
+      upperThirdAnalysis("male", upperThird)
+      print('\n')
+
+cv2.imshow('Análise Facial', resized_image)
+cv2.waitKey(0)
 cv2.destroyAllWindows()
-camera.release()
