@@ -1,46 +1,29 @@
 <script>
 import TextInput from './TextInput.vue';
-import Camera from 'simple-vue-camera';
 import TextArea from './TextArea.vue';
+import Webcam from './Webcam.vue';
 import axios from 'axios';
-import { WebCam } from 'vue-camera-lib'
 export default {
   components: {
     TextInput,
-    Camera,
     TextArea,
-    WebCam
-  },
-  methods: {
-    takePicture() {
-      this.$refs.webcam.resume();
-      this.$refs.webcam.takePhoto();
-      axios.get('http://127.0.0.1:5000/face_analysis')
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-    },
+    Webcam
   }
 }
 </script>
 
 <template>
   <header>
-    <h1>Análise Facial</h1>
+    <h1>Face.p</h1>
   </header>
   <div class="main">
-    <TextInput msg="Nome do Perfil"/>
+    <div class="input">
+      <TextInput msg="Nome do Perfil"/>
+    </div>
     <div class="camera">
-      <WebCam ref="webcam" :autoStart="true" :audio="false"/>
-      <button class="btn btn-success" @click="takePicture()">Tira foto</button>
+      <Webcam ref="cam" />
     </div>
-    <div class="description">
-      <TextArea label="Observações do Profissional"></TextArea>
-    </div>
-    <div class="action-buttons">
+    <div v-if="showBtns" class="action-buttons">
       <button id="saveAnalysis" class="btn btn-success">Salvar</button>
       <button id="cancelAnalysis" class="btn btn-danger">Cancelar</button>
     </div>
@@ -72,10 +55,7 @@ header {
   display: flex;
   margin-top: 20px;
 }
-.action-buttons {
-  margin-top: 20px;
-  display: flex;
-}
+
 #saveAnalysis {
   margin-right: 10px;
 }
