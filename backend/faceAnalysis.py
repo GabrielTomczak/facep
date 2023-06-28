@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 import math
-import numpy as np
+import json
 
 def calcDistance (point1, point2):
   return math.sqrt((point2[0] - point1[0])**2 + (point2[1] - point1[1])**2)
@@ -13,54 +13,55 @@ def calcThird(third, trme):
 
 def faceHeightAnalysis(faceHeight):
   if (faceHeight < 75):
-    print('Altura: Face longa - Indica preenchimento de malar.')
+    return 'Altura: Face longa - Indica preenchimento de malar.'
   elif (faceHeight > 75):
-    print('Altura: Face curta - Indica preenchimento de terço inferior.')
+    return 'Altura: Face curta - Indica preenchimento de terço inferior.'
 
 def faceWidthAnalysis(sex, faceWidth):
   if (faceWidth < 75 and sex == "female"):
-    print('Largura: Zi zi muito grande - Indica prenchimento mandibula/mento.')
+    return 'Largura: Zi zi muito grande - Indica prenchimento mandibula/mento.'
   elif (faceWidth > 75 and sex == "female"):
-    print('Largura: Go go muito grande - Indica preenchimento zigomatico/malar.')
+    return 'Largura: Go go muito grande - Indica preenchimento zigomatico/malar.'
   elif (faceWidth < 75 and sex == "male"):
-    print('Largura: Zi zi muito grande - Indica prenchimento mandibula/mento.')
+    return 'Largura: Zi zi muito grande - Indica prenchimento mandibula/mento.'
   elif (faceWidth > 75 and sex == "male"):
-    print('Largura: Face com tamanho ideal.')
+    return 'Largura: Face com tamanho ideal.'
 
 def lowerThirdAnalysis(sex, third):
   if (sex == "male" and third > 36):
-    print('Destacar terço médio Zi zi/Go go.')
+    return 'Destacar terço médio Zi zi/Go go.'
   elif (sex == "male" and third < 36):
-    print('Destacar')
+    return 'Destacar terço inferior'
   elif (sex == "female" and third > 33):
-    print('Destacar terço médio Zi zi/Go go.')
+    return 'Destacar terço médio Zi zi/Go go.'
   elif (sex == "female" and third < 33):
-    print('Destacar')
+    return 'Destacar terço inferior'
 
 def middleThirdAnalysis(sex, third):
   if (sex == "male" and third > 30):
-    print('Destacar terço inferior.')
+    return 'Destacar terço inferior.'
   elif (sex == "male" and third < 30):
-    print('Destacar molar CK3.')
+    return 'Destacar malar CK3.'
   elif (sex == "female" and third > 33):
-    print('Destacar terço inferior.')
+    return 'Destacar terço inferior.'
   elif (sex == "female" and third < 33):
-    print('Destacar molar CK3.')
+    return 'Destacar malar CK3.'
 
 def upperThirdAnalysis(sex, third):
   if (sex == "male" and third > 34):
-    print('Destacar terço médio e inferior.')
+    return 'Destacar terço médio e inferior.'
   elif (sex == "male" and third < 34):
-    print('Destacar terço médio e inferior.')
+    return 'Avaliar conjunto de terços.'
   elif (sex == "female" and third > 34):
-    print('Destacar terço Destacar terço médio e inferior.')
+    return 'Destacar terço médio e inferior.'
   elif (sex == "female" and third < 34):
-    print('Destacar terço médio e inferior.')
+    return 'Avaliar conjunto de terços.'
 
 
 faceModel = mp.solutions.face_mesh
 model = faceModel.FaceMesh(static_image_mode=True, max_num_faces=1, min_detection_confidence=0.5)
 
+# image = cv2.imread('C:/Users/lucas/Downloads/face.png')
 image = cv2.imread('images/photo.jpg')
 original_width, original_height = image.shape[:2]
 
@@ -119,7 +120,7 @@ if processedModel.multi_face_landmarks:
 
       focal_length = 22
 
-      trme         = trmeDistance * focal_length / width
+      trme         = (trmeDistance * focal_length / width)
       zizi         = ziziDistance * focal_length / width
       gogo         = gogoDistance * focal_length / width
       snn          = snnDistance  * focal_length / width
@@ -133,22 +134,39 @@ if processedModel.multi_face_landmarks:
       lower  = calcThird(lowerThird, trme)
       middle = calcThird(middleThird, trme)
       upper  = calcThird(upperThird, trme)
+      upper += 3
 
-      print(f'\nTrme_zizi: {faceHeight:.2f} %')
-      faceHeightAnalysis(faceHeight)
-      print(f'\nZizi_Gogo: {faceWidth:.2f} %')
-      faceWidthAnalysis("male", faceWidth)
-      print('\n')
-      print(f'Terço inferior: {lower:.0f} %')
-      lowerThirdAnalysis("male", lowerThird)
-      print('\n')
-      print(f'Terço meio: {middle:.0f} %')
-      middleThirdAnalysis("male", middleThird)
-      print('\n')
-      print(f'Terço superior: {upper:.0f} %')
-      upperThirdAnalysis("male", upperThird)
-      print('\n')
+      data = {
+      "Trme_zizi": round(faceHeight, 2),
+      "Trme_zizi_desc": faceHeightAnalysis(faceHeight),
+      "Zizi_Gogo": round(faceWidth, 2),
+      "Zizi_Gogo_desc": faceWidthAnalysis("male", faceWidth),
+      "terco_inferior": round(lower),
+      "terco_inferior_desc": lowerThirdAnalysis("male", lower),
+      "terco_meio": round(middle),
+      "terco_meio_desc": middleThirdAnalysis("male", middle),
+      "terco_superior": round(upper),
+      "terco_superior_desc": upperThirdAnalysis("male", upper),
+      }
 
-cv2.imshow('Análise Facial', resized_image)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+      json_data = json.dumps(data)
+      print(json_data)
+
+      # print(f'\nTrme_zizi: {faceHeight:.2f} %')
+      # faceHeightAnalysis(faceHeight)
+      # print(f'\nZizi_Gogo: {faceWidth:.2f} %')
+      # faceWidthAnalysis("male", faceWidth)
+      # print('\n')
+      # print(f'Terço inferior: {lower:.0f} %')
+      # lowerThirdAnalysis("male", lower)
+      # print('\n')
+      # print(f'Terço meio: {middle:.0f} %')
+      # middleThirdAnalysis("male", middle)
+      # print('\n')
+      # print(f'Terço superior: {upper:.0f} %')
+      # upperThirdAnalysis("male", upper)
+      # print('\n')
+
+# cv2.imshow('Análise Facial', resized_image)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
