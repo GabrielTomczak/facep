@@ -3,7 +3,9 @@ import addFaceAnalysis from './components/addFaceAnalysis.vue'
 </script>
 
 <template>
-  <addFaceAnalysis/>
+  <div class="main">
+    <addFaceAnalysis/>
+  </div>
 </template>
 
 <style>

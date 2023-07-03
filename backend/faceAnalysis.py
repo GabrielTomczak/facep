@@ -2,9 +2,15 @@ import cv2
 import mediapipe as mp
 import math
 import json
+import os
 
 def calcDistance (point1, point2):
   return math.sqrt((point2[0] - point1[0])**2 + (point2[1] - point1[1])**2)
+
+def showFace(image):
+  cv2.imshow('Análise Facial', image)
+  cv2.waitKey(0)
+  cv2.destroyAllWindows()
 
 def calcThird(third, trme):
   thirdValue = third * 100
@@ -29,47 +35,46 @@ def faceWidthAnalysis(sex, faceWidth):
 
 def lowerThirdAnalysis(sex, third):
   if (sex == "male" and third > 36):
-    return 'Destacar terço médio Zi zi/Go go.'
+    return 'Terço Inferior - Destacar terço médio Zi zi/Go go.'
   elif (sex == "male" and third < 36):
-    return 'Destacar terço inferior'
+    return 'Terço Inferior - Destacar terço inferior'
   elif (sex == "female" and third > 33):
-    return 'Destacar terço médio Zi zi/Go go.'
+    return 'Terço Inferior - Destacar terço médio Zi zi/Go go.'
   elif (sex == "female" and third < 33):
-    return 'Destacar terço inferior'
+    return 'Terço Inferior - Destacar terço inferior'
 
 def middleThirdAnalysis(sex, third):
   if (sex == "male" and third > 30):
-    return 'Destacar terço inferior.'
+    return 'Terço Médio - Destacar terço inferior.'
   elif (sex == "male" and third < 30):
-    return 'Destacar malar CK3.'
+    return 'Terço Médio - Destacar malar CK3.'
   elif (sex == "female" and third > 33):
-    return 'Destacar terço inferior.'
+    return 'Terço Médio - Destacar terço inferior.'
   elif (sex == "female" and third < 33):
-    return 'Destacar malar CK3.'
+    return 'Terço Médio - Destacar malar CK3.'
 
 def upperThirdAnalysis(sex, third):
   if (sex == "male" and third > 34):
-    return 'Destacar terço médio e inferior.'
+    return 'Terço Superior - Destacar terço médio e inferior.'
   elif (sex == "male" and third < 34):
-    return 'Avaliar conjunto de terços.'
+    return 'Terço Superior - Avaliar conjunto de terços.'
   elif (sex == "female" and third > 34):
-    return 'Destacar terço médio e inferior.'
+    return 'Terço Superior - Destacar terço médio e inferior.'
   elif (sex == "female" and third < 34):
-    return 'Avaliar conjunto de terços.'
+    return 'Terço Superior - Avaliar conjunto de terços.'
 
 
 faceModel = mp.solutions.face_mesh
 model = faceModel.FaceMesh(static_image_mode=True, max_num_faces=1, min_detection_confidence=0.5)
 
-# image = cv2.imread('C:/Users/lucas/Downloads/face.png')
-image = cv2.imread('images/photo.jpg')
+image = cv2.imread('C:/Users/lucas/Downloads/face.png')
 original_width, original_height = image.shape[:2]
 
 new_width = 450
 new_height = 600
 
 resized_image = cv2.resize(image, (new_width, new_height))
-image_rgb = cv2.cvtColor(resized_image, cv2.COLOR_BGR2RGB)
+image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 processedModel = model.process(image_rgb)
 
@@ -91,7 +96,7 @@ if processedModel.multi_face_landmarks:
       point7 = face_landmarks.landmark[2]
       point8 = face_landmarks.landmark[9]
 
-      height, width, _ = resized_image.shape
+      height, width, _ = image.shape
       point1_px = int(point1.x * width), int(point1.y * height)
       point2_px = int(point2.x * width), int(point2.y * height)
       point3_px = int(point3.x * width), int(point3.y * height)
@@ -101,14 +106,14 @@ if processedModel.multi_face_landmarks:
       point7_px = int(point7.x * width), int(point7.y * height)
       point8_px = int(point8.x * width), int(point8.y * height)
 
-      cv2.circle(resized_image, point1_px, 5, (0, 255, 0), -1)
-      cv2.circle(resized_image, point2_px, 5, (0, 255, 0), -1)
-      cv2.circle(resized_image, point3_px, 5, (0, 255, 0), -1)
-      cv2.circle(resized_image, point4_px, 5, (0, 255, 0), -1)
-      cv2.circle(resized_image, point5_px, 5, (0, 255, 0), -1)
-      cv2.circle(resized_image, point6_px, 5, (0, 255, 0), -1)
-      cv2.circle(resized_image, point7_px, 5, (0, 255, 0), -1)
-      cv2.circle(resized_image, point8_px, 5, (0, 255, 0), -1)
+      cv2.circle(image, point1_px, 5, (0, 255, 0), -1)
+      cv2.circle(image, point2_px, 5, (0, 255, 0), -1)
+      cv2.circle(image, point3_px, 5, (0, 255, 0), -1)
+      cv2.circle(image, point4_px, 5, (0, 255, 0), -1)
+      cv2.circle(image, point5_px, 5, (0, 255, 0), -1)
+      cv2.circle(image, point6_px, 5, (0, 255, 0), -1)
+      cv2.circle(image, point7_px, 5, (0, 255, 0), -1)
+      cv2.circle(image, point8_px, 5, (0, 255, 0), -1)
 
       trmeDistance = calcDistance(point1_px, point2_px)
       ziziDistance = calcDistance(point3_px, point4_px)
@@ -152,21 +157,5 @@ if processedModel.multi_face_landmarks:
       json_data = json.dumps(data)
       print(json_data)
 
-      # print(f'\nTrme_zizi: {faceHeight:.2f} %')
-      # faceHeightAnalysis(faceHeight)
-      # print(f'\nZizi_Gogo: {faceWidth:.2f} %')
-      # faceWidthAnalysis("male", faceWidth)
-      # print('\n')
-      # print(f'Terço inferior: {lower:.0f} %')
-      # lowerThirdAnalysis("male", lower)
-      # print('\n')
-      # print(f'Terço meio: {middle:.0f} %')
-      # middleThirdAnalysis("male", middle)
-      # print('\n')
-      # print(f'Terço superior: {upper:.0f} %')
-      # upperThirdAnalysis("male", upper)
-      # print('\n')
-
-# cv2.imshow('Análise Facial', resized_image)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+# showFace(image)
+os.remove('C:/Users/lucas/Downloads/face.png')

@@ -1,13 +1,23 @@
 <script>
 import TextInput from './TextInput.vue';
 import TextArea from './TextArea.vue';
+import Select from './Select.vue';
 import Webcam from './Webcam.vue';
 import axios from 'axios';
 export default {
   components: {
     TextInput,
     TextArea,
+    Select,
     Webcam
+  },
+  data(){
+    faceData: {};
+  },
+  methods: {
+    getData(value) {
+      this.faceData = value;
+    }
   }
 }
 </script>
@@ -17,15 +27,14 @@ export default {
     <h1>Face.p</h1>
   </header>
   <div class="main">
-    <div class="input">
-      <TextInput msg="Nome do Perfil"/>
-    </div>
+    <form class="input">
+      <TextInput msg="Nome do Paciente"/>
+      <Select msg="sexo"/>
+    </form>
     <div class="camera">
-      <Webcam ref="cam" />
+      <Webcam ref="cam" @facedata="getData" />
     </div>
-    <div v-if="showBtns" class="action-buttons">
-      <button id="saveAnalysis" class="btn btn-success">Salvar</button>
-      <button id="cancelAnalysis" class="btn btn-danger">Cancelar</button>
+    <div class="results">
     </div>
   </div>
 </template>
@@ -41,15 +50,6 @@ header {
   color: white;
   text-align: center;
   margin: 10px;
-}
-
-.camera {
-  margin-top: 50px;
-  max-width: 500px;
-  max-height: 500px;
-}
-.camera button {
-  margin-top: 10px;
 }
 .description {
   display: flex;
