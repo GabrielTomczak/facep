@@ -7,16 +7,26 @@
   A documentação desse projeto se encontra no seguinte endereço: https://facep.atlassian.net/l/cp/CGzFGZBj
 
 # Referências bibliográficas
-ABOUT. OpenCV, 2023. Disponivel em: < http://bitly.ws/KkAy>. Acesso em: 12 de Junho de 2023.
+ABOUT. OpenCV, 2023. Disponivel em: < http://bitly.ws/KkAy>. Acesso em: 12 de Junho de 2023. 
+
 ARNETT, GW; Bergman RT. Facial Keys to orthodontic diagnosis and treatment planning part I. Am J Orthod Dentofacial Orthop. 1993; 103(4): 299-312.
+
 AXIOS. Introdução Axios Docs, 2023. Disponivel em: < http://bitly.ws/KkAi >. Acesso em: 30 de Junho de 2023.
+
 BIANCHINI, EMG. A cefalometria nas alterações miofuncionais orais – diagnóstico e tratamento fonoaudiológico. 5a ed rev. e ampl. Carapicuíba: Pró-fono; 2002.
+
 BOOTSTRAP, Get started with Bootstrap, 2023. Disponivel em: < http://bitly.ws/KkzT> Acesso em: 03 de Julho de 2023.
+
 CARDOSO, P; DECURSIO, R. Facetas, lentes de contato e fragmentos cerâmicos. Florianópolis: Editora Ponto, 2015.
+
 CHU, J. Y. et al. Creating a hypertext markup language document for an information server. Behavior Research Methods, Instruments, & Computers, Springer, v. 27, n. 2, p.200–205, 1995.
+
 CZARNECKI, S.T, Nanda RS, Currier GF. Perceptions of a balanced facial profile. Am J Orthod Dentofacial Orthop. 1993;104(2):180-7.
+
 FARKAS, L. G. Anthropometry of the head and face. 2a ed. New York: Raven Press; 1994. p.1-77.
+
 FERNANDES; NETO; EURIPEDES. Visão computacional para identificação de cores em tempo real com Opencv e Python. 2020. Monografia (Graduação em Engenharia da Computação) - Faculdade de Tecnologia e Ciências Sociais Aplicadas, Centro Universitário de Brasília, Brasília, 2020.
+
 FLANAGAN, D. JavaScript: o guia definitivo. [S.l.]: Bookman Editora, 2004
 GRINBERG, M. Flask Web Development. O'reilly, 2018.
 JACOBSON, R.L. Facial analysis in two and three dimensions. In: Jacobson A. Radiographic cephalometry- from basics to videoimaging. Chicago: Quintessence Publishing Co; 1995. p.273-94.
