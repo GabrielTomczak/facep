@@ -3,7 +3,6 @@ import TextInput from './TextInput.vue';
 import TextArea from './TextArea.vue';
 import Select from './Select.vue';
 import Webcam from './Webcam.vue';
-import axios from 'axios';
 export default {
   components: {
     TextInput,
@@ -12,7 +11,12 @@ export default {
     Webcam
   },
   data(){
-    faceData: {};
+    return {
+      faceData: {},
+      name: "",
+      sex: "",
+      value: "",
+    }
   },
   methods: {
     getData(value) {
@@ -27,12 +31,12 @@ export default {
     <h1>Face.p</h1>
   </header>
   <div class="main">
-    <form class="input">
-      <TextInput msg="Nome do Paciente"/>
-      <Select msg="sexo"/>
-    </form>
+    <div class="input">
+      <TextInput v-model="name" v-model:name="name" msg="Nome do Paciente"/>
+      <Select v-model="sex" v-model:sex="sex" msg="sexo"/>
+    </div>
     <div class="camera">
-      <Webcam ref="cam" @facedata="getData" />
+      <Webcam :name="name" :sex="sex" ref="cam" @facedata="getData" />
     </div>
     <div class="results">
     </div>

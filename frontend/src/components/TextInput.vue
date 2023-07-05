@@ -1,7 +1,13 @@
 <script>
 export default{
+  data() {
+    return {
+      name: "",
+    }
+  },
   props: {
-    msg: String
+    msg: String,
+    modelValue: String,
   }
 }
 </script>
@@ -9,7 +15,7 @@ export default{
   <div class="input-label">
     <label>{{ msg }}</label>
   </div>
-  <input type="text" class="form-control">
+  <input :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" type="text" class="form-control">
 </template>
 
 <style>

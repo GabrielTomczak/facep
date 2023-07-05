@@ -3,6 +3,10 @@ import mediapipe as mp
 import math
 import json
 import os
+import sys
+
+name = sys.argv[1]
+sex  = sys.argv[2]
 
 def calcDistance (point1, point2):
   return math.sqrt((point2[0] - point1[0])**2 + (point2[1] - point1[1])**2)
@@ -125,7 +129,7 @@ if processedModel.multi_face_landmarks:
 
       focal_length = 22
 
-      trme         = (trmeDistance * focal_length / width)
+      trme         = trmeDistance * focal_length / width
       zizi         = ziziDistance * focal_length / width
       gogo         = gogoDistance * focal_length / width
       snn          = snnDistance  * focal_length / width
@@ -133,29 +137,30 @@ if processedModel.multi_face_landmarks:
       middleThird  = middleThird  * focal_length / width
       upperThird   = upperThird   * focal_length / width
 
-      faceHeight = (zizi / trme) * 100
+      faceHeight = (trme / zizi) * 100
       faceWidth  = (gogo / zizi) * 100
 
       lower  = calcThird(lowerThird, trme)
       middle = calcThird(middleThird, trme)
       upper  = calcThird(upperThird, trme)
-      upper += 3
 
       data = {
       "Trme_zizi": round(faceHeight, 2),
       "Trme_zizi_desc": faceHeightAnalysis(faceHeight),
       "Zizi_Gogo": round(faceWidth, 2),
-      "Zizi_Gogo_desc": faceWidthAnalysis("male", faceWidth),
+      "Zizi_Gogo_desc": faceWidthAnalysis(sex, faceWidth),
       "terco_inferior": round(lower),
-      "terco_inferior_desc": lowerThirdAnalysis("male", lower),
+      "terco_inferior_desc": lowerThirdAnalysis(sex, lower),
       "terco_meio": round(middle),
-      "terco_meio_desc": middleThirdAnalysis("male", middle),
+      "terco_meio_desc": middleThirdAnalysis(sex, middle),
       "terco_superior": round(upper),
-      "terco_superior_desc": upperThirdAnalysis("male", upper),
+      "terco_superior_desc": upperThirdAnalysis(sex, upper),
+      "name": name,
+      "sex": sex
       }
 
+      os.remove('C:/Users/lucas/Downloads/face.png')
       json_data = json.dumps(data)
       print(json_data)
 
 # showFace(image)
-os.remove('C:/Users/lucas/Downloads/face.png')

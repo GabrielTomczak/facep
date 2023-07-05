@@ -1,7 +1,13 @@
 <script>
 export default{
+  data() {
+    return {
+      sex: "",
+    }
+  },
   props: {
-    msg: String
+    msg: String,
+    modelValue: String
   }
 }
 </script>
@@ -9,9 +15,9 @@ export default{
   <div class="select-label">
     <label>{{ msg }}</label>
   </div>
-  <select class="form-select">
-    <option value="1">Homem</option>
-    <option value="2">Mulher</option>
+  <select :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" class="form-select">
+    <option value="male">Homem</option>
+    <option value="female">Mulher</option>
   </select>
 </template>
 

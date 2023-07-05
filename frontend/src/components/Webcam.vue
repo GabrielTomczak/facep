@@ -1,5 +1,4 @@
 <script>
-import { ref } from 'vue';
 import axios from 'axios';
 
 export default {
@@ -18,6 +17,10 @@ export default {
       middleThirdsDesc: "",
       lowerThirdDesc: "",
     };
+  },
+  props: {
+    name: String,
+    sex: String,
   },
   mounted() {
     this.startCamera();
@@ -58,7 +61,8 @@ export default {
       link.download = 'face.png';
       link.click();
 
-      axios.get('http://127.0.0.1:5000/face_analysis')
+      console.log(this.name)
+      axios.get(`http://127.0.0.1:5000/face_analysis?name=${this.name}&sex=${this.sex}`)
         .then(response => {
           this.faceData = response.data;
           this.faceHeight = this.faceData["Trme_zizi"];
@@ -112,11 +116,11 @@ export default {
         </thead>
         <tbody>
           <tr>
-            <th scope="row">{{ faceHeight }}</th>
-            <td>{{ faceWidth }}</td>
-            <td>{{ upperThird }}</td>
-            <td>{{ middleThird }}</td>
-            <td>{{ lowerThird }}</td>
+            <th scope="row">{{ faceHeight + "%" }}</th>
+            <td>{{ faceWidth + "%" }}</td>
+            <td>{{ upperThird + "%" }}</td>
+            <td>{{ middleThird + "%" }}</td>
+            <td>{{ lowerThird + "%" }}</td>
           </tr>
         </tbody>
       </table>
